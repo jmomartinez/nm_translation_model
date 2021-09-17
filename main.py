@@ -1,4 +1,5 @@
 from pre_processing import pre_processing
+from tensorflow.keras.models import load_model
 from model import model
 from encoding import encoding
 import _pickle as cPickle
@@ -14,7 +15,7 @@ class main:
         self.epochs = 30
         self.preprocessing_bool = True
         self.encoding_bool = True
-        self.train_bool = False
+        self.train_bool = True
         self.predict_bool = True
         self.pred_decoding = True
         self.disp_results = True
@@ -143,3 +144,11 @@ class main:
             print('TAIL:\n',predictions_df.tail(15),'\n')
 
             print('RANDOM COMPARISON SAMPLE:\n',pred_comparison_df.sample(15),'\n')
+
+if __name__ == '__main__':
+    main_obj = main()
+    main_obj.pre_processing_func()
+    main_obj.train_func()
+    main_obj.predict_func()
+    main_obj.pred_decoding_func()
+    main_obj.disp_results_func()

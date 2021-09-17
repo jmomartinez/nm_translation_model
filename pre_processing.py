@@ -41,4 +41,4 @@ class pre_processing: # Parent Class
         df = pd.DataFrame({'English':e_lengths, 'French':f_lengths}).hist(bins=25)
         # x-axis = Sentence Length 
         # y-axis Sentence Instances
-        plt.show()
+        # plt.show()
