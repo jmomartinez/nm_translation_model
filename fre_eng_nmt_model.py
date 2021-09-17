@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences    
 from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.utils import plot_model
 import matplotlib.pyplot as plt 
 import _pickle as cPickle
 import pandas as pd
