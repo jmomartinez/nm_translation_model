@@ -1,44 +1,48 @@
 import numpy as np
 import pandas as pd
 import re
+import matplotlib.pyplot as plt
 
-# FUNCTIONS: Initializer, load_text, text_length, max_lengths, vis_lengths
+# FUNCTIONS: Constructor, load_and_clean,text_length, max_lengths, visualize_lengths
 class pre_processing: # Parent Class
-    def __init__(self,path,encoding,text):
+    def __init__(self,path,encoding):
         self.path = path
         self.encoding = encoding
-        self.text = text
+        self.text = 0
+        self.e_lengths = 0
+        self.f_lengths = 0
 
-    def load_text(self):
+    def load_and_clean(self):
         text = []
         for line in open(self.path,mode = 'r', encoding = self.encoding):
-                line = line.strip().split('\t')
+                line = line.split('\t')
                 line = '|'.join(line[:1]+line[1:2])
                 line = re.sub(r"[^a-z A-Z|]",'',line).lower().split('|')
                 text.append(line)
 
         text = np.asarray(text)
         self.text = text[:50000,:] # Complete dataset = 150,000 words, phrases and sentences
-
+        print(self.text[:1000])
     def text_lengths(self):
         e_lengths = []
         f_lengths = []
 
-        for i in self.text[:,0]:
-            e_lengths.append(len(i.split()))
+        for seq1 in self.text[:,0]:
+            e_lengths.append(len(seq1.split()))
 
-        for i in self.text[:,1]:
-            f_lengths.append(len(i.split()))
+        for seq2 in self.text[:,1]:
+            f_lengths.append(len(seq2.split()))
 
-        return e_lengths,f_lengths
+        self.e_lengths,self.f_lengths = e_lengths,f_lengths
+
+    def visualize_lengths(self):
+        self.text_lengths()
+        pd.DataFrame({'English':self.e_lengths, 'French':self.f_lengths}).hist(bins=20)
+        plt.show()
+        # x-axis = Sequence Length 
+        # y-axis Sequence length Instances (i.e. # of times a sequence of length n appears)
 
     def max_lengths(self):
-        e_lengths,f_lengths = self.text_lengths()
-        return max(e_lengths), max(f_lengths)
-
-    def vis_lengths(self):
-        e_lengths, f_lengths = self.text_lengths()
-        df = pd.DataFrame({'English':e_lengths, 'French':f_lengths}).hist(bins=25)
-        # x-axis = Sentence Length 
-        # y-axis Sentence Instances
-        # plt.show()
+        if self.e_lengths == 0:
+            self.text_lengths()
+        return max(self.e_lengths), max(self.f_lengths)

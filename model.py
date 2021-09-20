@@ -27,14 +27,14 @@ class model:
         model.add(LSTM(self.nodes,return_sequences=True))
         model.add(Dense(self.e_vocab,activation='softmax'))
         
-        model.compile(optimizer='RMSprop',loss= 'sparse_categorical_crossentropy')
+        model.compile(optimizer='RMSprop',loss= 'sparse_categorical_crossentropy',metrics=['accuracy'])
         return model
 
     def train_model(self):
         (x_train,y_train),(x_test,y_test) = self.data
         model = self.create_model()
 
-        chk_point = ModelCheckpoint('best_model.tf',monitor='val_loss',verbose=1,save_best_only=True,mode='min')
+        chk_point = ModelCheckpoint('best_model.tf',monitor='val_loss',verbose=1,save_best_only=True,mode='min') # Add patience?
 
         fit_model = model.fit(x_train,y_train.reshape(y_train.shape[0],y_train.shape[1],1),
             epochs=self.epochs,batch_size=self.batch_size,validation_split=.2,verbose=1,callbacks=[chk_point])

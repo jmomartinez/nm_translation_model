@@ -15,27 +15,28 @@ class main:
         self.epochs = 30
         self.preprocessing_bool = True
         self.encoding_bool = True
-        self.train_bool = True
-        self.predict_bool = True
-        self.pred_decoding = True
-        self.disp_results = True
+        self.train_bool = False
+        self.predict_bool = False
+        self.pred_decoding = False
+        self.disp_results = False
     
     # LOADING & PRE-PROCESSING STAGE 
     def pre_processing_func(self):
         if self.preprocessing_bool == True:
-            processing_obj = pre_processing(self.path,self.encoding_type,[])
-            processing_obj.load_text()
+            processing_obj = pre_processing(self.path,self.encoding_type)
+            processing_obj.load_and_clean()
+            processing_obj.visualize_lengths()
             e_max_len, f_max_len = processing_obj.max_lengths()
-            processing_obj.vis_lengths()
+
 
         # ENCODING STAGE 
         if self.encoding_bool == True:
-            encoding_obj = encoding(self.path,self.encoding_type,[])
-            encoding_obj.load_text()
-            encoded_data, test, e_vocab_size, f_vocab_size, eng_tokenizer, fre_tokenizer = encoding_obj.encode()
+            encoding_obj = encoding(self.path,self.encoding_type)
+            # encoding_obj.load_and_clean()
+            sequence_data, test, e_vocab_size, f_vocab_size, eng_tokenizer, fre_tokenizer = encoding_obj.encode()
 
             with open('train_test_data.pickle','wb') as data:
-                cPickle.dump((encoded_data,test), data)
+                cPickle.dump((sequence_data,test), data)
 
             with open('max_lengths.pickle','wb') as lengths:
                 cPickle.dump((e_max_len,f_max_len), lengths)
@@ -51,7 +52,7 @@ class main:
     def train_func(self):
         if self.train_bool == True:
             with open('train_test_data.pickle','rb') as data:
-                encoded_data, test = cPickle.load(data)
+                sequence_data, test = cPickle.load(data)
 
             with open('max_lengths.pickle','rb') as lengths:
                 e_max_len, f_max_len = cPickle.load(lengths)
@@ -59,7 +60,7 @@ class main:
             with open('vocab_sizes.pickle','rb') as vocabs:
                 e_vocab_size,f_vocab_size = cPickle.load(vocabs)
 
-            new_model = model(encoded_data,self.batch_size,self.epochs,e_vocab_size,f_vocab_size,e_max_len,f_max_len)
+            new_model = model(sequence_data,self.batch_size,self.epochs,e_vocab_size,f_vocab_size,e_max_len,f_max_len)
             fit_model = new_model.train_model()
 
             # Train-Validation Loss plot
@@ -77,8 +78,8 @@ class main:
         if self.predict_bool == True:
             best_model = load_model('best_model.tf')
             with open('train_test_data.pickle','rb') as data:
-                encoded_data, test = cPickle.load(data)
-            (x_train,y_train), (x_test,y_test) = encoded_data
+                sequence_data, test = cPickle.load(data)
+            (x_train,y_train), (x_test,y_test) = sequence_data
 
             predictions = best_model.predict_classes(x_test.reshape((x_test.shape[0],x_test.shape[1])))
 
@@ -96,8 +97,8 @@ class main:
                 eng_tokenizer, fre_tokenizer = cPickle.load(tokenizers)
 
             with open('train_test_data.pickle','rb') as data:
-                encoded_data, test = cPickle.load(data)
-            (x_train,y_train), (x_test,y_test) = encoded_data
+                sequence_data, test = cPickle.load(data)
+            (x_train,y_train), (x_test,y_test) = sequence_data
 
         def get_word(n, tk):
             for word, index in tk.word_index.items():
@@ -133,7 +134,7 @@ class main:
                 prediction_text = cPickle.load(decoded_preds)
 
             with open('train_test_data.pickle','rb') as data:
-                encoded_data, test = cPickle.load(data)
+                sequence_data, test = cPickle.load(data)
 
             print('Actual Shape:{}\nPredicted Shape:{}'.format(test.shape,np.asarray(prediction_text).shape))
 
