@@ -7,7 +7,7 @@ import _pickle as cPickle
 class main:
     def __init__(self,run_opts):
         self.run_opts = run_opts
-        self.path = '../../../Datasets/fra.txt'
+        self.path = '../fra.txt'
         self.encoding_type  = 'utf-8'
 
     def pre_process(self):
@@ -54,7 +54,6 @@ class main:
             decoding_obj.prediction_decoding()
             decoding_obj.view_translations()
 
-if __name__ == '__main__':
     run_opts = {'dpp':True,'encode':True,'train_predict':True,'decode':True}
     main_obj = main(run_opts)
     main_obj.pre_process()
