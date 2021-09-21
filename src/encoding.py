@@ -35,10 +35,10 @@ class encoding(pre_processing): # pre_processing subclass
         y_test = self.to_sequences(eng_tokenizer, test[:, 0], max_eng_len)
         data = (x_train,y_train),(x_test,y_test)
 
-        english_vocab_size = len(eng_tokenizer.word_index)#+1
+        english_vocab_size = len(eng_tokenizer.word_index)+1
         # print(len(eng_tokenizer.word_index)+1)
         # print(eng_tokenizer.word_index)
-        french_vocab_size = len(fre_tokenizer.word_index)#+1
+        french_vocab_size = len(fre_tokenizer.word_index)+1
         # print('x_train,x_test shape:{}{}'.format(x_train.shape,x_test.shape))
         # print('y_train,y_test shape:{}{}'.format(y_train.shape,y_test.shape))
 

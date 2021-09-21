@@ -56,7 +56,7 @@ class main:
 
 if __name__ == '__main__':
     run_opts = {'dpp':True,'encode':True,'train_predict':True,'decode':True}
-    main_obj = main()
+    main_obj = main(run_opts)
     main_obj.pre_process()
     main_obj.encode_data()
     main_obj.train_predict()

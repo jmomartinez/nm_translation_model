@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import re
 import matplotlib.pyplot as plt
+import json
 
 # FUNCTIONS: Constructor, load_and_clean,text_length, max_lengths, visualize_lengths
 class pre_processing: # Parent Class
@@ -24,14 +25,8 @@ class pre_processing: # Parent Class
         self.text = text[:50000,:] # Complete dataset = 150,000 words, phrases and sentences
 
     def text_lengths(self):
-        e_lengths = []
-        f_lengths = []
-
-        for seq1 in self.text[:,0]:
-            e_lengths.append(len(seq1.split()))
-
-        for seq2 in self.text[:,1]:
-            f_lengths.append(len(seq2.split()))
+        e_lengths = [len(seq1.split()) for seq1 in self.text[:,0]]
+        f_lengths = [len(seq2.split()) for seq2 in self.text[:,1]]
 
         self.e_lengths,self.f_lengths = e_lengths,f_lengths
 
@@ -39,6 +34,7 @@ class pre_processing: # Parent Class
         self.load_and_clean()
         self.text_lengths()
         pd.DataFrame({'English':self.e_lengths, 'French':self.f_lengths}).hist(bins=20)
+        plt.savefig('Sequence Length Distribution.png')
         plt.show()
         # x-axis = Sequence Length 
         # y-axis Sequence length Instances (i.e. # of times a sequence of length n appears)
