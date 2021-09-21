@@ -22,7 +22,7 @@ class pre_processing: # Parent Class
 
         text = np.asarray(text)
         self.text = text[:50000,:] # Complete dataset = 150,000 words, phrases and sentences
-        print(self.text[:1000])
+
     def text_lengths(self):
         e_lengths = []
         f_lengths = []
