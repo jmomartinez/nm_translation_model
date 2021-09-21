@@ -30,7 +30,8 @@ class model:
         
         model.compile(optimizer='RMSprop',loss= 'sparse_categorical_crossentropy',metrics=['accuracy'])
         return model
-
+        
+    # CURRENT APPROXIMATE TRAIN TIME: 90 minutes
     def train_model(self):
         (x_train,y_train),(x_test,y_test) = self.data
         model = self.create_model()

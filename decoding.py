@@ -4,8 +4,8 @@ import numpy as np
 
 # FUNCTIONS: get_word,prediction_decoding,view_translations
 class decoding():
-    def __init__(self):
-        pass
+    def __init__(self,subset_view):
+        self.subset_view = subset_view
 
     def get_word(self,n,tk):
         for word, index in tk.word_index.items():
@@ -54,7 +54,7 @@ class decoding():
         predictions_df = pd.DataFrame({'Input French Txt':test_data[:,1], 'Predicted English Txt':prediction_text})
         pred_comparison_df = pd.DataFrame({'Actual English Txt':test_data[:,0], 'Predicted English Txt':prediction_text})
 
-        print('HEAD:\n',predictions_df.head(15),'\n')
-        print('TAIL:\n',predictions_df.tail(15),'\n')
+        print('HEAD:\n',predictions_df.head(self.subset_view),'\n')
+        print('TAIL:\n',predictions_df.tail(self.subset_view),'\n')
 
-        print('RANDOM COMPARISON SAMPLE:\n',pred_comparison_df.sample(15),'\n')
+        print('RANDOM COMPARISON SAMPLE:\n',pred_comparison_df.sample(self.subset_view),'\n')

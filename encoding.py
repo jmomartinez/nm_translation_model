@@ -26,7 +26,6 @@ class encoding(pre_processing): # pre_processing subclass
         fre_tokenizer = self.tokenize(self.text[:,1])
 
         max_eng_len,max_fre_len = self.max_lengths()
-        # print('Max lens(eng,fre):{}{}'.format(max_eng_len,max_fre_len))
 
         # Seqence Encoding
         x_train = self.to_sequences(fre_tokenizer, train[:, 1], max_fre_len)

@@ -36,6 +36,7 @@ class pre_processing: # Parent Class
         self.e_lengths,self.f_lengths = e_lengths,f_lengths
 
     def visualize_lengths(self):
+        self.load_and_clean()
         self.text_lengths()
         pd.DataFrame({'English':self.e_lengths, 'French':self.f_lengths}).hist(bins=20)
         plt.show()
@@ -43,6 +44,8 @@ class pre_processing: # Parent Class
         # y-axis Sequence length Instances (i.e. # of times a sequence of length n appears)
 
     def max_lengths(self):
+        if self.text==0:
+            self.load_and_clean()
         if self.e_lengths == 0:
             self.text_lengths()
         return max(self.e_lengths), max(self.f_lengths)
