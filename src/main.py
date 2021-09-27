@@ -4,6 +4,7 @@ from model import model
 from decoding import decoding
 import _pickle as cPickle
 
+# FUNCTIONS: Constructor,pre_process,encode_data,train_predict,decode_preds
 class main:
     def __init__(self,run_opts):
         self.run_opts = run_opts
@@ -33,7 +34,7 @@ class main:
 
     def train_predict(self):
         if self.run_opts['train_predict']==True:
-            batch_size,epochs = 500,30
+            batch_size,epochs = 250,30
             #Loading data,max_lens and vocab sizes
             with open('data.pickle','rb') as data:
                 sequence_data, original_test_data = cPickle.load(data)
@@ -44,8 +45,8 @@ class main:
 
             new_model = model(sequence_data,batch_size,epochs,e_vocab_size,f_vocab_size,e_max_len,f_max_len)
             fit_model = new_model.train_model()
-            model.performance_vis(fit_model)
-            model.predict()
+            new_model.performance_vis(fit_model)
+            new_model.predict()
 
     def decode_preds(self):
         if self.run_opts['decode']==True:
@@ -54,6 +55,7 @@ class main:
             decoding_obj.prediction_decoding()
             decoding_obj.view_translations()
 
+if __name__ == '__main__':
     run_opts = {'dpp':True,'encode':True,'train_predict':True,'decode':True}
     main_obj = main(run_opts)
     main_obj.pre_process()

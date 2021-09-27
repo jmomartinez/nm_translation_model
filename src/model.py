@@ -1,10 +1,11 @@
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, LSTM, Embedding, TimeDistributed, RepeatVector
-from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.utils import plot_model
 import _pickle as cPickle
+import matplotlib.pyplot as plt
 
-# FUNCTIONS: Initializer, create_model, train_model
+# FUNCTIONS: Constructor, create_model, train_model
 class model:
     def __init__(self,data,batch_size,epochs,eng_vocab_size,fre_vocab_size,e_max,f_max):
         self.data = data
@@ -14,7 +15,7 @@ class model:
         self.fre_vocab_size = fre_vocab_size
         self.e_max = e_max
         self.f_max = f_max
-        self.embedding_vectors = 500
+        self.embedding_vectors = 250
 
     def create_model(self):
         model = Sequential()
@@ -28,6 +29,7 @@ class model:
         model.add(LSTM(self.embedding_vectors,return_sequences=True))
         model.add(Dense(self.eng_vocab_size,activation='softmax'))
         
+        plot_model(model, to_file='train_model.png', show_shapes=True)
         model.compile(optimizer='RMSprop',loss= 'sparse_categorical_crossentropy',metrics=['accuracy'])
         return model
         
@@ -37,9 +39,11 @@ class model:
         model = self.create_model()
 
         chk_point = ModelCheckpoint('best_model.tf',monitor='val_loss',verbose=1,save_best_only=True,mode='min') # Add patience?
+        early_stopping = EarlyStopping(monitor='val_loss',patience=2,mode='min')
+        callbacks = [chk_point,early_stopping]
 
         fit_model = model.fit(x_train,y_train.reshape(y_train.shape[0],y_train.shape[1],1),
-            epochs=self.epochs,batch_size=self.batch_size,validation_split=.2,verbose=1,callbacks=[chk_point])
+            epochs=self.epochs,batch_size=self.batch_size,validation_split=.2,verbose=1,callbacks=callbacks)
         return fit_model
 
     def performance_vis(self,fit_model):

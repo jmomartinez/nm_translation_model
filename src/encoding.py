@@ -3,7 +3,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences   
 from sklearn.model_selection import train_test_split 
 
-# FUNCTIONS: Initializer, tokenize, to_sequences, encode
+# FUNCTIONS: Constructor, tokenize, to_sequences, encode
 class encoding(pre_processing): # pre_processing subclass
     def __init__(self,path,encoding):
         super().__init__(path,encoding)

@@ -2,7 +2,7 @@ import _pickle as cPickle
 import pandas as pd
 import numpy as np
 
-# FUNCTIONS: get_word,prediction_decoding,view_translations
+# FUNCTIONS: Constructor,get_word,prediction_decoding,view_translations
 class decoding():
     def __init__(self,subset_view):
         self.subset_view = subset_view
@@ -14,10 +14,9 @@ class decoding():
         return None
 
     def prediction_decoding(self):
-        # Predictions
+        # Loading Predictions & Tokenizers
         with open('encoded_preds.pickle','rb') as encoded_preds:
             predictions = cPickle.load(encoded_preds)
-        # Tokenizers
         with open('tokenizers.pickle','rb') as tokenizers:
             eng_tokenizer, fre_tokenizer = cPickle.load(tokenizers)
 
