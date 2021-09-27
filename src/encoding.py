@@ -14,7 +14,7 @@ class encoding(pre_processing): # pre_processing subclass
         return tk
 
     def to_sequences(self,tokenizer,text,max_len):
-        sequences = tokenizer.texts_to_sequences(text) #whats going on inside this method?
+        sequences = tokenizer.texts_to_sequences(text)
         sequences = pad_sequences(sequences,maxlen = max_len,padding='post')
         return sequences
 
