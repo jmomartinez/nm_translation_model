@@ -2,7 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
-#.idea/
+.idea/
+.DS_Store
+
+# Data Files
+fra.txt
 
 # C extensions
 *.so
