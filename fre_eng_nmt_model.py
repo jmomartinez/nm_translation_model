@@ -97,7 +97,7 @@ class encoding(PreProcessing): # PreProcessing subclass
 
         max_eng_len,max_fre_len = self.max_lengths()
 
-        # Seqence Encoding
+        # Sequence Encoding
         x_train = self.to_sequences(fre_tokenizer, train[:, 1], max_fre_len)
         y_train = self.to_sequences(eng_tokenizer, train[:, 0], max_eng_len)
 
