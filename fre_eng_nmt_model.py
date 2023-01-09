@@ -9,61 +9,81 @@ import _pickle as cPickle
 import pandas as pd
 import numpy as np
 import re
+from typing import Tuple
 
 
 # FUNCTIONS: Initializer, load_text, text_length, max_lengths, vis_lengths
-class pre_processing: # Parent Class
-    def __init__(self,path,encoding,text):
+class PreProcessing: # Parent Class
+    def __init__(self,path:str,encoding:str):
         self.path = path
         self.encoding = encoding
-        self.text = text
+        self.text = []
 
-    def load_text(self):
-        text = []
-        for line in open(self.path,mode = 'r', encoding = self.encoding):
-                line = line.strip().split('\t')
-                line = '|'.join(line[:1]+line[1:2])
-                line = re.sub(r"[^a-z A-Z|]",'',line).lower().split('|')
-                text.append(line)
+    def load_text(self) -> None:
+        ''' 
 
-        text = np.asarray(text)
-        self.text = text[:50000,:] # Complete dataset = 150,000 words, phrases and sentences
+        Note: Complete dataset = 150,000 words, phrases and sentences
+        args:
 
-    def text_lengths(self):
-        e_lengths = []
-        f_lengths = []
+        output:
 
-        for i in self.text[:,0]:
-            e_lengths.append(len(i.split()))
+        '''
+        with open(self.path,mode='r',encoding=self.encoding) as txt_file:
+            for i,line in enumerate(txt_file):
+                if i>50000:
+                    break
+                split_line = line.strip().split('\t')
+                eng  = re.sub(r"[^a-zA-Z]",'',split_line[0]).lower()
+                fre = re.sub(r"[^a-zA-Z]",'',line_list[1]).lower()
+                self.text.append([eng,fre])
 
-        for i in self.text[:,1]:
-            f_lengths.append(len(i.split()))
+        self.text = np.asarray(self.text)
 
-        return e_lengths,f_lengths
+    def sequence_lengths(self) -> Tuple[list,list]:
+        ''' 
 
-    def max_lengths(self):
-        e_lengths,f_lengths = self.text_lengths()
-        return max(e_lengths), max(f_lengths)
+        args:
 
-    def vis_lengths(self):
-        e_lengths, f_lengths = self.text_lengths()
-        df = pd.DataFrame({'English':e_lengths, 'French':f_lengths}).hist(bins=25)
-        # x-axis = Sentence Length 
-        # y-axis Sentence Instances
-        plt.show()
+        output:
+
+        '''        
+        english_lengths = [len(sequence.split()) for sequence in self.text[:,0]]
+        french_lengths = [len(sequence.split()) for sequence in self.text[:,1]]
+
+        return english_lengths,french_lengths, max(eng_lengths), max(fre_lengths)
+
+    # def vis_lengths(self):
+    #     e_lengths, f_lengths = self.text_lengths()
+    #     df = pd.DataFrame({'English':e_lengths, 'French':f_lengths}).hist(bins=25)
+    #     # x-axis = Sentence Length 
+    #     # y-axis Sentence Instances
+    #     plt.show()
 
 
 # FUNCTIONS: Initializer, tokenize, to_sequences, encode
-class encoding(pre_processing): # pre_processing subclass
+class encoding(PreProcessing): # PreProcessing subclass
     def __init__(self,path,encoding,text):
         super().__init__(path,encoding,text)
 
-    def tokenize(self,lines):
+    def tokenize(self,lines) -> object:
+        """
+
+        :return:
+        :param lines:
+        :return:
+        """
         tk = Tokenizer()
         tk.fit_on_texts(lines)
-        return tk   
+        return tk
 
     def to_sequences(self,tokenizer,text,max_len):
+        """
+
+        :param tokenizer:
+        :param text:
+        :param max_len:
+        :return:
+        """
         sequences = tokenizer.texts_to_sequences(text)
         sequences = pad_sequences(sequences,maxlen = max_len,padding='post')
         return sequences
@@ -77,7 +97,7 @@ class encoding(pre_processing): # pre_processing subclass
 
         max_eng_len,max_fre_len = self.max_lengths()
 
-        # Seqence Encoding
+        # Sequence Encoding
         x_train = self.to_sequences(fre_tokenizer, train[:, 1], max_fre_len)
         y_train = self.to_sequences(eng_tokenizer, train[:, 0], max_eng_len)
 
@@ -132,7 +152,7 @@ class model:
 
 class main:
     def __init__(self):
-        self.path = '../../../Datasets/fra.txt'
+        self.path = 'fra.txt'
         self.encoding_type  = 'utf-8'
         self.batch_size = 256
         self.epochs = 30
@@ -144,9 +164,9 @@ class main:
         self.disp_results = True
     
     # LOADING & PRE-PROCESSING STAGE 
-    def pre_processing_func(self):
+    def PreProcessing_func(self):
         if self.preprocessing_bool == True:
-            processing_obj = pre_processing(self.path,self.encoding_type,[])
+            processing_obj = PreProcessing(self.path,self.encoding_type,[])
             processing_obj.load_text()
             e_max_len, f_max_len = processing_obj.max_lengths()
             processing_obj.vis_lengths()
@@ -270,7 +290,7 @@ class main:
 
 if __name__ == '__main__':
     main_obj = main()
-    main_obj.pre_processing_func()
+    main_obj.PreProcessing_func()
     main_obj.train_func()
     main_obj.predict_func()
     main_obj.pred_decoding_func()
