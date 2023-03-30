@@ -2,11 +2,13 @@ import re
 import os
 import pickle
 import numpy as np
-from typing import Tuple, Any, Dict, Union
+from typing import Tuple, Any, Dict
 from keras.preprocessing.text import Tokenizer
 from keras.utils import pad_sequences
 from sklearn.model_selection import train_test_split
 from datetime import datetime
+from keras.models import load_model
+from typing import Union, List
 
 
 # Build the encoder-decoder model
@@ -89,7 +91,7 @@ class SequenceEncoding:
         return padded_sequences
 
     def split_data(self, test_size: float = 0.20, seed: int = 4) -> Tuple[
-            np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """
         Splits text data into train and test where x and y represent the input and output languages, respectively
         :param test_size: (optional) percentage of data to save for testing
@@ -157,3 +159,36 @@ class SequenceEncoding:
 
         with open(f'{directory}/out_tokenizer_{now}.pkl', 'wb') as out_file2:
             pickle.dump(out_tokenizer, out_file2)
+
+
+class SequenceDecoding:
+    def __init__(self, trained_model_path: str, output_language_tokenizer: Tokenizer):
+        self.model_path = trained_model_path
+        self.tokenizer = output_language_tokenizer
+
+    def predict_translation(self, x_test: np.ndarray) -> np.ndarray:
+        fit_model = load_model(self.model_path)
+        return fit_model.predict_classes(x_test)
+
+    def get_word(self, word_index) -> Union[None, str]:
+        for word, index in self.tokenizer.word_index.items():
+            if index == word_index:
+                return word
+        return None
+
+    def decode_predictions(self, predictions) -> List[str]:
+        decoded_preds = []
+
+        for pred in predictions:
+            current_prediction = []
+            for i in range(len(pred)):
+                word = self.get_word(pred[i])
+                if i == 0 and word:
+                    current_prediction.append(word)
+                # I question the need to check for word uniqueness, don't think it happens often
+                elif i > 0 and word != self.get_word(pred[i - 1]) and word:
+                    current_prediction.append(word)
+
+            decoded_preds.append(' '.join(current_prediction))
+
+        return decoded_preds
