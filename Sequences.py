@@ -11,11 +11,6 @@ from keras.models import load_model
 from typing import Union, List
 
 
-# Build the encoder-decoder model
-# Train and establish a checkpoints in case the program crashes
-# Predict on test set
-# Decode the predictions back into (French) words
-
 class SequenceEncoding:
     def __init__(self, path_to_text: str, line_limit: int = None):
         self.path = path_to_text
@@ -168,10 +163,11 @@ class SequenceDecoding:
 
     def predict_translation(self, x_test: np.ndarray) -> np.ndarray:
         fit_model = load_model(self.model_path)
-        return fit_model.predict_classes(x_test)
+        return fit_model.predict(x_test.reshape((x_test.shape[0], x_test.shape[1])))
 
     def get_word(self, word_index) -> Union[None, str]:
         for word, index in self.tokenizer.word_index.items():
+            print(word,index,word_index)
             if index == word_index:
                 return word
         return None

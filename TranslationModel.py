@@ -43,10 +43,10 @@ class TranslationModel:
         chk_point = ModelCheckpoint('best_model.keras', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 
         if self.args.validation_split:
-            history = model.fit(self.x_train, self.y_train, epochs=self.args.epochs, batch_size=self.args.batch_size,
+            history = model.fit(self.x_train, self.y_train.reshape(self.y_train.shape[0], self.y_train.shape[1], 1), epochs=self.args.epochs, batch_size=self.args.batch_size,
                                 validation_split=self.args.validation_split, verbose=2, callbacks=[chk_point])
         else:
-            history = model.fit(self.x_train, self.y_train, epochs=self.args.epochs, batch_size=self.args.batch_size,
+            history = model.fit(self.x_train, self.y_train.reshape(self.y_train.shape[0], self.y_train.shape[1], 1), epochs=self.args.epochs, batch_size=self.args.batch_size,
                                 verbose=2,callbacks=[chk_point])
 
         self._output_model(model)
